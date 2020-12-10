@@ -58,11 +58,4 @@ alias nvimrc="nvim ~/.config/nvim/init.vim"
 alias sshconfig="cat ~/.ssh/config"
 
 # zsh
-alias zshrc="nvim ~/.zshrc"
-
-
-# Work
-# alias ssh-production-ws="ssh linker@52.183.19.93"
-# alias ssh-production-druid="ssh linker@13.77.182.49"
-# alias ssh-stage-ws="ssh linker@52.183.62.6"
-# alias ssh-stage-druid="ssh linker@52.151.50.223"
+alias zshrc="vim ~/.zshrc"
