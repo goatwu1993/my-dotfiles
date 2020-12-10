@@ -4,7 +4,7 @@
 
 ## About
 
-Forked from [unixorn/zsh-quickstart-kit](https://github.com/unixorn/zsh-quickstart-kit)
+My Dotfiles for macOS
 
 ## Install
 
@@ -14,3 +14,7 @@ git clone repourl
 cd directory
 sh ./install.sh
 ```
+
+## Zsh
+
+[oh-my-zsh](https://ohmyz.sh/#install)
