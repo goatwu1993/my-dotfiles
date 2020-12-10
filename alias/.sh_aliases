@@ -1,11 +1,5 @@
 #!/bin/bash
 
-#alias dockerip="docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}'"
-#alias dockerrs="docker restart $(docker ps -aq)"
-#alias dockerrm="docker stop $(docker ps -aq); docker remove $(docker ps -aq)"
-alias dpsf="docker ps --format '{{.Names}}\n\tContainer ID: {{.ID}}\n\tCommand: {{.Command}}\n\tImage: {{.Image}}\n\tCreatedAt: {{.CreatedAt}}\n\tStatus: {{.Status}}'"
-
-
 # brew
 alias b="brew"
 
