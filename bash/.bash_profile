@@ -1,25 +1,19 @@
-#!/bin/bash
+echo "bash profile"
+PATH="$PATH:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin" # Make sure to use double quotes not single quotes And on a new line 
+export PATH
 
-# * Base PATH
-# * Change this will cause command not found
-export PATH="/bin:/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin:$PATH"
+# >>> conda initialize >>>
+# !! Contents within this block are managed by 'conda init' !!
+__conda_setup="$('/Users/wuzhaoyang/miniconda3/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
+if [ $? -eq 0 ]; then
+    eval "$__conda_setup"
+else
+    if [ -f "/Users/wuzhaoyang/miniconda3/etc/profile.d/conda.sh" ]; then
+        . "/Users/wuzhaoyang/miniconda3/etc/profile.d/conda.sh"
+    else
+        export PATH="/Users/wuzhaoyang/miniconda3/bin:$PATH"
+    fi
+fi
+unset __conda_setup
+# <<< conda initialize <<<
 
-#################
-#### * PATH  ####
-#################
-# curl
-export PATH="/usr/local/opt/curl/bin:$PATH"
-# arping
-export PATH="/usr/local/sbin:$PATH"
-# nvm script is slow. Move to Alias to speed up terminal initialization
-# vscode
-export EDITOR='code -w'
-export PATH=$PATH:$HOME/bin
-# Spark
-export SPARK_HOME=/usr/local/Cellar/apache-spark/2.4.5/libexec/
-export PATH=/usr/local/Cellar/apache-spark/2.4.5/libexec/sbin/:$PATH
-export PYSPARK_DRIVER_PYTHON=/usr/local/Caskroom/miniconda/base/envs/py3.7.0/bin/python
-# tmux
-export TERM=xterm-256color
-# thefuck
-eval $(thefuck --alias)
