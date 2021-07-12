@@ -4,7 +4,7 @@
 
 ## About
 
-My Dotfiles for macOS
+My dotfiles for macOS
 
 ## Install
 
