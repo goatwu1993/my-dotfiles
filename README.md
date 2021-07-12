@@ -6,13 +6,24 @@
 
 My dotfiles for macOS
 
-## Install
+## Step Up
 
 ```bash
 brew install stow
-git clone repourl
-cd directory
+# Stow only works if directory is right under HOME
+cd ${HOME}
+
+git clone https://github.com/goatwu1993/my-dotfiles
+cd my-dotfiles
+```
+
+## Install
+
+```bash
+# Script
 sh ./install.sh
+# Stow example
+stow slate
 ```
 
 ## Zsh
