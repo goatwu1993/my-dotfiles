@@ -5,3 +5,4 @@
 # git
 alias gs="git status"
 alias tree="tree -a"
+alias ll="ls -lAh"
