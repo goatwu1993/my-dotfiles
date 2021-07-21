@@ -1,13 +1,10 @@
 #!/bin/bash
 
-# brew
-
-# git
-alias gs="git status"
-alias tree="tree -a"
-alias ll="ls -lAh"
-
 dbash() { docker exec -it $@ bash ;}
 dlog()  { docker logs --tail=all -f $@ ;}
-
 kbash() { kubectl exec -it $@ -- bash ;}
+
+alias fy="fuck -y"
+alias gs="git status"
+alias ll="ls -lAh"
+alias tree="tree -a"
