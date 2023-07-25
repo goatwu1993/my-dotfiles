@@ -1,7 +1,88 @@
 #!/bin/bash
 
-# brew
+dbash() { docker exec -it $@ bash ;}
+dlog()  { docker logs --tail=all -f $@ ;}
+kbash() { kubectl exec -it $@ -- bash ;}
+lares_access_token()
+{
+    export LARES_ACCESS_TOKEN="$@"
+}
 
-# git
+gh_run_view_detailed()
+{
+    gh run view $@ --log-failed
+}
+
+touch_init_py()
+{
+    touch $1/__init__.py;
+}
+
+release-please-commit()
+{
+    git commit -m "chore: release $@" -m "Release-As: $@" --allow-empty
+}
+
+jwt_payload()
+{
+    echo $@ | jq -R 'split(".") | .[1] | @base64d | fromjson'
+}
+
+refactor() {
+    if [ $# -ne 2 ]; then
+        echo "Usage: replace_strings <old_string> <new_string>"
+        return 1
+    fi
+
+    old_string=$1
+    new_string=$2
+
+    # Use ripgrep (rg) to search for files containing the old string
+    rg -l "$old_string" | parallel "gsed -i 's/$old_string/$new_string/g' {}"
+}
+
+#alias vim="nvim"
+alias fy="fuck -y"
 alias gs="git status"
+alias ll="ls -lAh"
 alias tree="tree -a"
+alias git-branch-prune="gb -l | grep -Ev '(master|main|stable.*)' | xargs -I{} git branch -D {}"
+alias gbp="git-branch-prune"
+alias hgrep="history | grep"
+alias aws-docker-login='aws ecr get-login-password --region $(aws configure get region) |  docker login --username AWS --password-stdin $(aws sts get-caller-identity --query Account --output text).dkr.ecr.$(aws configure get region).amazonaws.com'
+
+alias copysshpub='cat ~/.ssh/id_rsa.pub | pbcopy'
+alias v="nvim"
+alias vm="nvim"
+alias vi="nvim"
+alias vmi="nvim"
+alias vim="nvim"
+alias vum="nvim"
+alias vun="nvim"
+alias acsr="aws configure set region"
+alias yb="yarn build"
+alias ghprvw="gh pr view -w"
+alias prvw="gh pr view -w"
+alias setadcsshkey="gh ssh-key add ~/.ssh/id_rsa.pub -t peter_mbpr"
+alias peotry="poetry"
+
+x(){
+    if [ -f $1 ] ; then
+            case $1 in
+                    *.tar.bz2)   tar xvjf $1    ;;
+                    *.tar.gz)    tar xvzf $1    ;;
+                    *.bz2)       bunzip2 $1     ;;
+                    *.rar)       unrar x $1     ;;
+                    *.gz)        gunzip $1      ;;
+                    *.tar)       tar xvf $1     ;;
+                    *.tbz2)      tar xvjf $1    ;;
+                    *.tgz)       tar xvzf $1    ;;
+                    *.zip)       unzip $1       ;;
+                    *.Z)         uncompress $1  ;;
+                    *.7z)        7z x $1        ;;
+                    *)           echo "Unable to extract '$1'" ;;
+            esac
+    else
+            echo "'$1' is not a valid file"
+    fi
+}

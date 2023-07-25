@@ -21,18 +21,18 @@ alias triple ctrl;alt;cmd
 alias triple2 alt;ctrl;shift
 
 # Location bindings
-bind left:${triple} ${lefthalf}
+bind j:${triple} ${lefthalf}
 bind m:${triple} ${full}
-bind right:${triple} ${righthalf}
-bind up:${triple} ${tophalf}
-bind down:${triple} ${bottomhalf}
+bind l:${triple} ${righthalf}
+bind i:${triple} ${tophalf}
+bind k:${triple} ${bottomhalf}
 bind c:${triple} ${center}
 bind v:${triple} ${bigCenter}
-bind down:${triple2} ${bottomleft}
-bind right:${triple2} ${bottomright}
-bind left:${triple2} ${topleft}
-bind up:${triple2} ${topright}
+bind k:${triple2} ${bottomleft}
+bind l:${triple2} ${bottomright}
+bind j:${triple2} ${topleft}
+bind i:${triple2} ${topright}
 
 # Monitor switching bindings
-bind right:alt,ctrl throw 1 resize
-bind left:alt,ctrl throw 0 resize
+bind l:alt,ctrl throw 1 resize
+bind j:alt,ctrl throw 0 resize

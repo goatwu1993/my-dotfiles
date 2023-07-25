@@ -1,4 +1,4 @@
-# My-Dotfiles
+# Dotfiles
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
@@ -20,8 +20,6 @@ cd my-dotfiles
 ## Install
 
 ```bash
-# Script
-sh ./install.sh
 # Stow example
 stow slate
 ```

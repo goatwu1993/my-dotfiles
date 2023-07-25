@@ -1,0 +1,9 @@
+source $HOME/.config/nvim/0001-autoinstall.vim
+source $HOME/.config/nvim/0002-vimplug.vim
+source $HOME/.config/nvim/0003-general.vim
+source $HOME/.config/nvim/0004-fzf.vim
+source $HOME/.config/nvim/0005-format.vim
+source $HOME/.config/nvim/0006-tabcompletion.vim
+source $HOME/.config/nvim/0007-autocmd.vim
+" record cursor
+"au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
