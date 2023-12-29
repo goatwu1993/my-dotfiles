@@ -3,7 +3,7 @@ autocmd FileType json,md,typescript,js setlocal ts=2 sts=2 sw=2 expandtab
 "autocmd BufWritePre *.py execute ':Black'
 autocmd BufWritePre *.tf execute ':TerraformFmt'
 autocmd BufWritePre *.hcl execute ':HclFmt'
-autocmd BufWritePre *.ts,*.js execute ':EslintFixAll'
+autocmd BufWritePre *.ts,*.js,*.jsx,*tsx,*.cjs execute ':EslintFixAll'
 autocmd BufReadPost *
       \ if line("'\"") >= 1 && line("'\"") <= line("$") && &ft !~# 'commit'
       \ |   exe "normal! g`\""
