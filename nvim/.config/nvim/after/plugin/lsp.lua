@@ -5,10 +5,11 @@ vim.api.nvim_set_keymap("n", "<space>e", "<cmd>lua vim.diagnostic.open_float()<C
 vim.api.nvim_set_keymap("n", "[d", "<cmd>lua vim.diagnostic.goto_prev()<CR>", opts)
 vim.api.nvim_set_keymap("n", "]d", "<cmd>lua vim.diagnostic.goto_next()<CR>", opts)
 vim.api.nvim_set_keymap("n", "<space>q", "<cmd>lua vim.diagnostic.setloclist()<CR>", opts)
+vim.api.nvim_set_keymap('n', '<Leader>rn', '<Cmd>lua vim.lsp.buf.rename()<CR>', { noremap = true, silent = true })
 
 -- Use an on_attach function to only map the following keys
 -- after the language server attaches to the current buffer
-local on_attach = function(client, bufnr)
+local global_on_attach = function(client, bufnr)
     -- Enable completion triggered by <c-x><c-o>
     vim.api.nvim_buf_set_option(bufnr, "omnifunc", "v:lua.vim.lsp.omnifunc")
 
@@ -16,6 +17,7 @@ local on_attach = function(client, bufnr)
     -- See `:help vim.lsp.*` for documentation on any of the below functions
     vim.api.nvim_buf_set_keymap(bufnr, "n", "gD", "<cmd>lua vim.lsp.buf.declaration()<CR>", opts)
     vim.api.nvim_buf_set_keymap(bufnr, "n", "gd", "<cmd>lua vim.lsp.buf.definition()<CR>", opts)
+    -- peek definition
     vim.api.nvim_buf_set_keymap(bufnr, "n", "K", "<cmd>lua vim.lsp.buf.hover()<CR>", opts)
     vim.api.nvim_buf_set_keymap(bufnr, "n", "gi", "<cmd>lua vim.lsp.buf.implementation()<CR>", opts)
     vim.api.nvim_buf_set_keymap(bufnr, "n", "<C-k>", "<cmd>lua vim.lsp.buf.signature_help()<CR>", opts)
@@ -97,12 +99,12 @@ local capabilities = require("cmp_nvim_lsp").default_capabilities(vim.lsp.protoc
 local lsp_config = require("lspconfig")
 lsp_config.pyright.setup({
     capabilities = capabilities,
-    on_attach = on_attach,
+    on_attach = global_on_attach,
 })
 
 lsp_config.terraformls.setup({
     cmnd = { "terraform-ls", "serve" },
-    on_attach = on_attach,
+    on_attach = global_on_attach,
 })
 
 local runtime_path = vim.split(package.path, ";")
@@ -132,7 +134,7 @@ lsp_config.lua_ls.setup({
             },
         },
     },
-    on_attach = on_attach,
+    on_attach = global_on_attach,
 })
 
 lsp_config.tsserver.setup({
@@ -142,7 +144,7 @@ lsp_config.tsserver.setup({
     init_options = require("nvim-lsp-ts-utils").init_options,
     --
     on_attach = function(client, bufnr)
-        on_attach(client, bufnr)
+        global_on_attach(client, bufnr)
 
         client.server_capabilities.document_formatting = false
         client.server_capabilities.document_range_formatting = false
@@ -170,7 +172,7 @@ lsp_config.tsserver.setup({
 lsp_config.eslint.setup({
     capabilities = capabilities,
     on_attach = function(client, bufnr)
-        on_attach(client, bufnr)
+        global_on_attach(client, bufnr)
         vim.cmd([[autocmd BufWritePre *.tsx,*.ts,*.jsx,*.js EslintFixAll]])
     end,
     settings = {
@@ -181,20 +183,39 @@ lsp_config.eslint.setup({
     },
 })
 
+local ruff_format_on_save = function()
+    --vim.lsp.buf.formatting_sync(nil, 1000)
+    ---- fix all
+    --vim.lsp.buf.code_action({
+    --    context = { only = { "source.fixAll" } },
+    --    apply = true,
+    --})
+
+    vim.lsp.buf.format({ async = false })
+end
+
 lsp_config.ruff_lsp.setup({
     capabilities = capabilities,
     on_attach = function(client, bufnr)
-        on_attach(client, bufnr)
-        vim.api.nvim_create_autocmd({
-            buffer = bufnr,
-            callback = function()
-                vim.lsp.buf.code_action({
-                context = { only = { "source.fixAll" } },
-                apply = true,
-                })
-                vim.wait(100)
-            end,
-    }, "BufWritePre")
+        global_on_attach(client, bufnr)
+        --vim.api.nvim_create_autocmd({
+        --    buffer = bufnr,
+        --    callback = function()
+        --        vim.lsp.buf.code_action({
+        --        context = { only = { "source.fixAll" } },
+        --        apply = true,
+        --        })
+        --        vim.lsp.buf.formatting_sync(nil, 1000)
+        --        vim.wait(100)
+        --    end,
+        --}, "BufWritePre")
+        local bufopts = { noremap = true, silent = true , buffer = bufnr}
+        vim.keymap.set('n', '<space>f', function() vim.lsp.buf.format { async = true } end, bufopts)
+        vim.api.nvim_create_autocmd("BufWritePre",{
+            group = vim.api.nvim_create_augroup("ruff_format_on_save", { clear = true }),
+            callback = ruff_format_on_save
+        })
+        -- set autocmd BufWritePre
     end,
     settings = {
         codeActionOnSave = {
@@ -219,7 +240,7 @@ lsp_config.ruff_lsp.setup({
 --}
 lsp_config.gopls.setup({
     capabilities = capabilities,
-    on_attach = on_attach,
+    on_attach = global_on_attach,
     settings = {
         gopls = {
             analyses = {
@@ -242,5 +263,19 @@ lsp_config.gopls.setup({
 --end
 lsp_config.rust_analyzer.setup({
     capabilities = capabilities,
-    on_attach = on_attach,
+    on_attach = global_on_attach,
 })
+require'treesitter-context'.setup{
+  enable = true, -- Enable this plugin (Can be enabled/disabled later via commands)
+  max_lines = 0, -- How many lines the window should span. Values <= 0 mean no limit.
+  min_window_height = 0, -- Minimum editor window height to enable context. Values <= 0 mean no limit.
+  line_numbers = true,
+  multiline_threshold = 20, -- Maximum number of lines to show for a single context
+  trim_scope = 'outer', -- Which context lines to discard if `max_lines` is exceeded. Choices: 'inner', 'outer'
+  mode = 'cursor',  -- Line used to calculate context. Choices: 'cursor', 'topline'
+  -- Separator between context and content. Should be a single character string, like '-'.
+  -- When separator is set, the context will only show up when there are at least 2 lines above cursorline.
+  separator = nil,
+  zindex = 20, -- The Z-index of the context window
+  on_attach = nil, -- (fun(buf: integer): boolean) return false to disable attaching
+}
