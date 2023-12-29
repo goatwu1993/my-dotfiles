@@ -34,7 +34,7 @@ vim.opt.undodir = os.getenv("HOME") .. "/.vim/undo"
 vim.opt.undofile = true
 vim.opt.updatecount =100
 vim.opt.wrapscan = true                -- Searches wrap around end-of-file.
-vim.o.clipboard = vim.o.clipboard .. "unnamedplus"
+--vim.o.clipboard = vim.o.clipboard .. "unnamedplus"
 vim.api.nvim_set_keymap('n', 'u', '<nop>', { noremap = true })
 vim.api.nvim_set_keymap('n', '<Leader>u', ':undo<CR>', { noremap = true, silent = true }) -- Map leader u to undo
 
