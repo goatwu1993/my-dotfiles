@@ -184,14 +184,11 @@ lsp_config.eslint.setup({
 })
 
 local ruff_format_on_save = function()
-    --vim.lsp.buf.formatting_sync(nil, 1000)
-    ---- fix all
-    --vim.lsp.buf.code_action({
-    --    context = { only = { "source.fixAll" } },
-    --    apply = true,
-    --})
-
     vim.lsp.buf.format({ async = false })
+    vim.lsp.buf.code_action({
+        context = { only = { "source.fixAll" } },
+        apply = true,
+    })
 end
 
 lsp_config.ruff_lsp.setup({
@@ -265,6 +262,21 @@ lsp_config.rust_analyzer.setup({
     capabilities = capabilities,
     on_attach = global_on_attach,
 })
+
+-- biome
+lsp_config.biome.setup({
+    capabilities = capabilities,
+    on_attach = function(client, bufnr)
+        global_on_attach(client, bufnr)
+        vim.api.nvim_buf_set_keymap(bufnr, "n", "<Leader>rn", "<Cmd>lua vim.lsp.buf.rename()<CR>", { noremap = true, silent = true })
+        -- auto format
+        vim.api.nvim_command('augroup biome_fmt')
+        vim.api.nvim_command('autocmd!')
+        vim.api.nvim_command('autocmd BufWritePre <buffer> lua vim.lsp.buf.format()')
+        vim.api.nvim_command('augroup END')
+    end,
+})
+
 require'treesitter-context'.setup{
   enable = true, -- Enable this plugin (Can be enabled/disabled later via commands)
   max_lines = 0, -- How many lines the window should span. Values <= 0 mean no limit.
@@ -279,3 +291,4 @@ require'treesitter-context'.setup{
   zindex = 20, -- The Z-index of the context window
   on_attach = nil, -- (fun(buf: integer): boolean) return false to disable attaching
 }
+
