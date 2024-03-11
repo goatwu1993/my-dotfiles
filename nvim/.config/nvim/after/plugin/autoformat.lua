@@ -44,3 +44,6 @@ vim.api.nvim_set_keymap('n', 'j', 'jzz', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', 'k', 'kzz', { noremap = true, silent = true })
 --vim.api.nvim_set_keymap('n', 'gg', 'ggO<Esc>zz', { noremap = true, silent = true })
 --vim.api.nvim_set_keymap('n', 'G', 'GA<Esc>zz', { noremap = true, silent = true })
+
+-- copy to system clipboard
+vim.api.nvim_set_keymap('v', '<leader>y', '"+y', { noremap = true, silent = true })

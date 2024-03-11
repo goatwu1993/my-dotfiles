@@ -7,38 +7,38 @@
 vim.opt.autoindent = true
 vim.opt.cindent = true
 vim.opt.eol = false
-vim.opt.expandtab = true              -- Use spaces instead of tabs.
+vim.opt.expandtab = true -- Use spaces instead of tabs.
 vim.opt.fixendofline = false
-vim.opt.guicursor = "i:blinkwait700-blinkoff400-blinkon250-block" -- This patch insert mode cursor back to blinking block
-vim.opt.hidden = true                 -- Switch between buffers without having to save first.
+vim.opt.guicursor = 'i:blinkwait700-blinkoff400-blinkon250-block' -- This patch insert mode cursor back to blinking block
+vim.opt.hidden = true -- Switch between buffers without having to save first.
 vim.opt.hlsearch = false
-vim.opt.ignorecase = true              -- ignore case when search
-vim.opt.laststatus = 2          -- Always show statusline.
+vim.opt.ignorecase = true -- ignore case when search
+vim.opt.laststatus = 2 -- Always show statusline.
 vim.opt.nu = true
 vim.opt.relativenumber = true
-vim.opt.report      =0          -- Always report changed lines.
-vim.opt.shiftround = true             -- indents to next multiple of 'shiftwidth'.
-vim.opt.showcmd = true                 -- Show already typed keys when more are expected.
-vim.opt.showmode = true              -- Show current mode in command-line.
-vim.opt.smartcase = true               -- ignore case when search
+vim.opt.report = 0 -- Always report changed lines.
+vim.opt.shiftround = true -- indents to next multiple of 'shiftwidth'.
+vim.opt.showcmd = true -- Show already typed keys when more are expected.
+vim.opt.showmode = true -- Show current mode in command-line.
+vim.opt.smartcase = true -- ignore case when search
 vim.opt.smarttab = true
-vim.opt.splitbelow = true             -- Open new windows below the current window.
-vim.opt.splitright = true             -- Open new windows right of the current window.
-vim.opt.sts=4                   -- softtab stop
-vim.opt.sw=4             	    -- shiftwidth
+vim.opt.splitbelow = true -- Open new windows below the current window.
+vim.opt.splitright = true -- Open new windows right of the current window.
+vim.opt.sts = 4 -- softtab stop
+vim.opt.sw = 4 -- shiftwidth
 vim.opt.swapfile = false
-vim.opt.synmaxcol   =200        -- Only highlight the first 200 columns.
-vim.opt.ts=4
-vim.opt.ttyfast = true                -- Faster redrawing.
-vim.opt.undodir = os.getenv("HOME") .. "/.vim/undo"
+vim.opt.synmaxcol = 200 -- Only highlight the first 200 columns.
+vim.opt.ts = 4
+vim.opt.ttyfast = true -- Faster redrawing.
+vim.opt.undodir = os.getenv 'HOME' .. '/.vim/undo'
 vim.opt.undofile = true
-vim.opt.updatecount =100
-vim.opt.wrapscan = true                -- Searches wrap around end-of-file.
+vim.opt.updatecount = 100
+vim.opt.wrapscan = true -- Searches wrap around end-of-file.
 --vim.o.clipboard = vim.o.clipboard .. "unnamedplus"
 vim.api.nvim_set_keymap('n', 'u', '<nop>', { noremap = true })
 vim.api.nvim_set_keymap('n', '<Leader>u', ':undo<CR>', { noremap = true, silent = true }) -- Map leader u to undo
 
-vim.cmd([[
+vim.cmd [[
   augroup jump_back
     autocmd!
     autocmd BufReadPost *
@@ -46,4 +46,4 @@ vim.cmd([[
           \ |   execute "normal! g`\""
           \ | endif
   augroup END
-]])
+]]
