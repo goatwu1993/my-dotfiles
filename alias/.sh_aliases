@@ -46,7 +46,7 @@ refactor() {
 alias fy="fuck -y"
 alias gs="git status"
 alias ll="ls -lAh"
-alias tree="tree -a"
+#alias tree="tree -I 'node_modules|cache|test_*|.git'"
 alias git-branch-prune="gb -l | grep -Ev '(master|main|stable.*|stag|prod)' | xargs -I{} git branch -D {}"
 alias gbp="git-branch-prune"
 alias hgrep="history | grep"
