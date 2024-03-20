@@ -16,14 +16,14 @@
 -- place it in the lsp.lua file where the lsp is setup instead
 -- like is js, there are biome and eslint
 -- so if the repo is configured to use biome, eslintfixall will failed because it is not installed/configured
-vim.cmd [[
+vim.cmd([[
 autocmd FileType json,md,typescript,js setlocal ts=2 sts=2 sw=2 expandtab
 autocmd BufRead,BufNewFile *.tf,*.tfvars,*.hcl set filetype=terraform
 autocmd BufWritePre *.tf,*.tfvars,*.hcl TerraformFmt
 autocmd BufWritePre *.go GoFmt
 autocmd FileType go setlocal ts=4 sts=4 sw=4 expandtab
 autocmd FileType json,md,typescript,js,typescriptreact setlocal ts=2 sts=2 sw=2 expandtab
-]]
+]])
 
 --vim.cmd [[
 --autocmd BufReadPost *

@@ -1,4 +1,4 @@
-local cmp = require 'cmp'
+local cmp = require('cmp')
 
 local opts = { noremap = true, silent = true }
 vim.api.nvim_set_keymap('n', '<space>e', '<cmd>lua vim.diagnostic.open_float()<CR>', opts)
@@ -16,7 +16,7 @@ local function is_biome_repo()
   -- root
   local lsp_util = require('lspconfig').util
   -- Define the root directory using the presence of a .git directory as an indicator
-  local root_dir = lsp_util.root_pattern '.git'(vim.fn.getcwd())
+  local root_dir = lsp_util.root_pattern('.git')(vim.fn.getcwd())
   -- fmt.print root
   print(root_dir)
   if root_dir == nil then
@@ -90,7 +90,7 @@ local global_on_attach = function(client, bufnr)
   vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>f', '<cmd>lua vim.lsp.buf.formatting()<CR>', opts)
 end
 
-cmp.setup {
+cmp.setup({
   snippet = {
     -- REQUIRED - you must specify a snippet engine
     expand = function(args)
@@ -100,26 +100,26 @@ cmp.setup {
       -- vim.fn["UltiSnips#Anon"](args.body) -- For `ultisnips` users.
     end,
   },
-  mapping = cmp.mapping.preset.insert {
+  mapping = cmp.mapping.preset.insert({
     ['<C-b>'] = cmp.mapping(cmp.mapping.scroll_docs(-4), { 'i', 'c' }),
     ['<C-f>'] = cmp.mapping(cmp.mapping.scroll_docs(4), { 'i', 'c' }),
     ['<C-Space>'] = cmp.mapping(cmp.mapping.complete(), { 'i', 'c' }),
     ['<C-y>'] = cmp.config.disable, -- Specify `cmp.config.disable` if you want to remove the default `<C-y>` mapping.
-    ['<C-e>'] = cmp.mapping {
+    ['<C-e>'] = cmp.mapping({
       i = cmp.mapping.abort(),
       c = cmp.mapping.close(),
-    },
-    ['<CR>'] = cmp.mapping.confirm { select = true }, -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
+    }),
+    ['<CR>'] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
     --["<Tab>"] = cmp.mapping.confirm({ select = true }),
-  },
-  sources = cmp.config.sources {
+  }),
+  sources = cmp.config.sources({
     { name = 'nvim_lsp' },
     { name = 'vsnip' }, -- For vsnip users.
     -- { name = 'luasnip' }, -- For luasnip users.
     -- { name = 'ultisnips' }, -- For ultisnips users.
     -- { name = 'snippy' }, -- For snippy users.
-  },
-}
+  }),
+})
 
 -- Set configuration for specific filetype.
 cmp.setup.filetype('gitcommit', {
@@ -150,21 +150,21 @@ cmp.setup.cmdline(':', {
 local capabilities =
   require('cmp_nvim_lsp').default_capabilities(vim.lsp.protocol.make_client_capabilities())
 -- Replace <YOUR_LSP_SERVER> with each lsp server you've enabled.
-local lsp_config = require 'lspconfig'
-lsp_config.pyright.setup {
+local lsp_config = require('lspconfig')
+lsp_config.pyright.setup({
   capabilities = capabilities,
   on_attach = global_on_attach,
-}
+})
 
-lsp_config.terraformls.setup {
+lsp_config.terraformls.setup({
   cmnd = { 'terraform-ls', 'serve' },
   on_attach = global_on_attach,
-}
+})
 
 local runtime_path = vim.split(package.path, ';')
 table.insert(runtime_path, 'lua/?.lua')
 table.insert(runtime_path, 'lua/?/init.lua')
-lsp_config.lua_ls.setup {
+lsp_config.lua_ls.setup({
   settings = {
     Lua = {
       runtime = {
@@ -194,16 +194,16 @@ lsp_config.lua_ls.setup {
   },
   on_attach = function(client, bufnr)
     global_on_attach(client, bufnr)
-    vim.api.nvim_command 'augroup lua_ls_fmt'
-    vim.api.nvim_command 'autocmd!'
+    vim.api.nvim_command('augroup lua_ls_fmt')
+    --vim.api.nvim_command("autocmd!")
     -- custom override the default lsp formatter in flavor of stylua
     --vim.api.nvim_command "autocmd BufWritePre <buffer> lua vim.lsp.buf.format()"
-    vim.api.nvim_command "autocmd BufWritePre <buffer> lua require('stylua-nvim').format_file()"
-    vim.api.nvim_command 'augroup END'
+    vim.api.nvim_command("autocmd BufWritePre <buffer> lua require('stylua-nvim').format_file()")
+    vim.api.nvim_command('augroup END')
   end,
-}
+})
 
-lsp_config.tsserver.setup {
+lsp_config.tsserver.setup({
   capabilities = capabilities,
   -- Needed for inlayHints. Merge this table with your settings or copy
   -- it from the source if you want to add your own init_options.
@@ -214,36 +214,41 @@ lsp_config.tsserver.setup {
 
     client.server_capabilities.document_formatting = false
     client.server_capabilities.document_range_formatting = false
-    local ts_utils = require 'nvim-lsp-ts-utils'
+    local ts_utils = require('nvim-lsp-ts-utils')
 
     -- defaults
-    ts_utils.setup {
+    ts_utils.setup({
       auto_inlay_hints = false,
       filter_out_diagnostics_by_severity = { 'hint', 'info' },
       update_imports_on_move = true,
       require_confirmation_on_move = true,
-    }
+    })
 
     -- required to fix code action ranges and filter diagnostics
     ts_utils.setup_client(client)
 
     -- no default maps, so you may want to define some here
-    local opts = { silent = true }
-    vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gs', ':TSLspOrganize<CR>', opts)
+    local locaVarOpts = { silent = true }
+    vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gs', ':TSLspOrganize<CR>', locaVarOpts)
     -- vim.api.nvim_buf_set_keymap(bufnr, "n", "gr", ":TSLspRenameFile<CR>", opts)
-    vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gS', ':TSLspImportAll<CR>', opts)
+    vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gS', ':TSLspImportAll<CR>', locaVarOpts)
   end,
-}
+})
 
 local ruff_format_on_save = function()
-  vim.lsp.buf.format { async = false }
-  vim.lsp.buf.code_action {
-    context = { only = { 'source.fixAll' } },
+  vim.lsp.buf.format({ async = false })
+  vim.lsp.buf.code_action({
+    context = {
+      diagnostics = vim.lsp.diagnostic.get(0),
+      only = {
+        'source.fixAll',
+      },
+    },
     apply = true,
-  }
+  })
 end
 
-lsp_config.ruff_lsp.setup {
+lsp_config.ruff_lsp.setup({
   capabilities = capabilities,
   on_attach = function(client, bufnr)
     global_on_attach(client, bufnr)
@@ -260,7 +265,7 @@ lsp_config.ruff_lsp.setup {
     --}, "BufWritePre")
     local bufopts = { noremap = true, silent = true, buffer = bufnr }
     vim.keymap.set('n', '<space>f', function()
-      vim.lsp.buf.format { async = true }
+      vim.lsp.buf.format({ async = true })
     end, bufopts)
     vim.api.nvim_create_autocmd('BufWritePre', {
       group = vim.api.nvim_create_augroup('ruff_format_on_save', { clear = true }),
@@ -274,7 +279,7 @@ lsp_config.ruff_lsp.setup {
       mode = 'all',
     },
   },
-}
+})
 
 --require'lspconfig'.gopls.setup{
 --    cmd = {"gopls", "--remote=auto"},
@@ -289,7 +294,7 @@ lsp_config.ruff_lsp.setup {
 --        },
 --    },
 --}
-lsp_config.gopls.setup {
+lsp_config.gopls.setup({
   capabilities = capabilities,
   on_attach = global_on_attach,
   settings = {
@@ -300,7 +305,7 @@ lsp_config.gopls.setup {
       staticcheck = true,
     },
   },
-}
+})
 
 --local function setup_rust_fmt()
 --    local ft = vim.api.nvim_buf_get_option(0, 'filetype')
@@ -311,14 +316,14 @@ lsp_config.gopls.setup {
 --        vim.api.nvim_command('augroup END')
 --    end
 --end
-lsp_config.rust_analyzer.setup {
+lsp_config.rust_analyzer.setup({
   capabilities = capabilities,
   on_attach = global_on_attach,
-}
+})
 
 -- biome
 if is_biome_repo() then
-  lsp_config.biome.setup {
+  lsp_config.biome.setup({
     capabilities = capabilities,
     on_attach = function(client, bufnr)
       global_on_attach(client, bufnr)
@@ -330,18 +335,18 @@ if is_biome_repo() then
         { noremap = true, silent = true }
       )
       -- auto format
-      vim.api.nvim_command 'augroup biome_fmt'
-      vim.api.nvim_command 'autocmd!'
-      vim.api.nvim_command 'autocmd BufWritePre <buffer> lua vim.lsp.buf.format()'
-      vim.api.nvim_command 'augroup END'
+      vim.api.nvim_command('augroup biome_fmt')
+      vim.api.nvim_command('autocmd!')
+      vim.api.nvim_command('autocmd BufWritePre <buffer> lua vim.lsp.buf.format()')
+      vim.api.nvim_command('augroup END')
     end,
-  }
+  })
 else
-  lsp_config.eslint.setup {
+  lsp_config.eslint.setup({
     capabilities = capabilities,
     on_attach = function(client, bufnr)
       global_on_attach(client, bufnr)
-      vim.cmd [[autocmd BufWritePre *.tsx,*.ts,*.jsx,*.js EslintFixAll]]
+      vim.cmd([[autocmd BufWritePre *.tsx,*.ts,*.jsx,*.js EslintFixAll]])
     end,
     settings = {
       codeActionOnSave = {
@@ -349,10 +354,37 @@ else
         mode = 'all',
       },
     },
-  }
+  })
 end
 
-require('treesitter-context').setup {
+lsp_config.yamlls.setup({
+  capabilities = capabilities,
+  on_attach = function(client, bufnr)
+    global_on_attach(client, bufnr)
+    vim.api.nvim_command('augroup yaml_fmt')
+    vim.api.nvim_command('autocmd BufWritePre <buffer> lua vim.lsp.buf.format()')
+    vim.api.nvim_command('augroup END')
+  end,
+  settings = {
+    yaml = {
+      format = {
+        enable = true,
+      },
+      validate = true,
+      schemas = {
+        ['.github/dependabot.yml'] = 'https://json.schemastore.org/dependabot-2.0.json',
+        ['.github/dependabot.yaml'] = 'https://json.schemastore.org/dependabot-2.0.json',
+      },
+    },
+    redhat = {
+      telemetry = {
+        enabled = false,
+      },
+    },
+  },
+})
+
+require('treesitter-context').setup({
   enable = true, -- Enable this plugin (Can be enabled/disabled later via commands)
   max_lines = 0, -- How many lines the window should span. Values <= 0 mean no limit.
   min_window_height = 0, -- Minimum editor window height to enable context. Values <= 0 mean no limit.
@@ -365,4 +397,4 @@ require('treesitter-context').setup {
   separator = nil,
   zindex = 20, -- The Z-index of the context window
   on_attach = nil, -- (fun(buf: integer): boolean) return false to disable attaching
-}
+})
