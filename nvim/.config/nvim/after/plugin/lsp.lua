@@ -25,9 +25,9 @@ local function is_biome_repo()
   local biome_config_path = root_dir .. '/biome.json'
   local biome_config_exists = vim.fn.filereadable(biome_config_path) == 1
   if biome_config_exists then
-    return true
+    return true, biome_config_path
   end
-  return false
+  return false, nil
 end
 
 -- Use an on_attach function to only map the following keys
@@ -239,7 +239,7 @@ local ruff_format_on_save = function()
   vim.lsp.buf.format({ async = false })
   vim.lsp.buf.code_action({
     context = {
-      diagnostics = vim.lsp.diagnostic.get(0),
+      --diagnostics = vim.lsp.diagnostic.get(0),
       only = {
         'source.fixAll',
       },
@@ -374,6 +374,10 @@ lsp_config.yamlls.setup({
       schemas = {
         ['.github/dependabot.yml'] = 'https://json.schemastore.org/dependabot-2.0.json',
         ['.github/dependabot.yaml'] = 'https://json.schemastore.org/dependabot-2.0.json',
+        ['infrastructure/**/*.yml'] = 'kubernetes',
+        ['infrastructure/**/*.yaml'] = 'kubernetes',
+        ['**/*.k8s.yaml'] = 'kubernetes',
+        ['**/*.k8s.yml'] = 'kubernetes',
       },
     },
     redhat = {
@@ -384,17 +388,17 @@ lsp_config.yamlls.setup({
   },
 })
 
-require('treesitter-context').setup({
-  enable = true, -- Enable this plugin (Can be enabled/disabled later via commands)
-  max_lines = 0, -- How many lines the window should span. Values <= 0 mean no limit.
-  min_window_height = 0, -- Minimum editor window height to enable context. Values <= 0 mean no limit.
-  line_numbers = true,
-  multiline_threshold = 20, -- Maximum number of lines to show for a single context
-  trim_scope = 'outer', -- Which context lines to discard if `max_lines` is exceeded. Choices: 'inner', 'outer'
-  mode = 'cursor', -- Line used to calculate context. Choices: 'cursor', 'topline'
-  -- Separator between context and content. Should be a single character string, like '-'.
-  -- When separator is set, the context will only show up when there are at least 2 lines above cursorline.
-  separator = nil,
-  zindex = 20, -- The Z-index of the context window
-  on_attach = nil, -- (fun(buf: integer): boolean) return false to disable attaching
-})
+--require("treesitter-context").setup({
+--    enable = true, -- enable this plugin (can be enabled/disabled later via commands)
+--    max_lines = 0, -- how many lines the window should span. values <= 0 mean no limit.
+--    min_window_height = 0, -- minimum editor window height to enable context. values <= 0 mean no limit.
+--    line_numbers = true,
+--    multiline_threshold = 20, -- maximum number of lines to show for a single context
+--    trim_scope = "outer", -- which context lines to discard if `max_lines` is exceeded. choices: 'inner', 'outer'
+--    mode = "cursor", -- line used to calculate context. choices: 'cursor', 'topline'
+--    -- separator between context and content. should be a single character string, like '-'.
+--    -- when separator is set, the context will only show up when there are at least 2 lines above cursorline.
+--    separator = nil,
+--    zindex = 20, -- the z-index of the context window
+--    on_attach = nil, -- (fun(buf: integer): boolean) return false to disable attaching
+--})

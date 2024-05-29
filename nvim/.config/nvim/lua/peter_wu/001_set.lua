@@ -27,18 +27,20 @@ vim.opt.splitright = true -- Open new windows right of the current window.
 vim.opt.sts = 4 -- softtab stop
 vim.opt.sw = 4 -- shiftwidth
 vim.opt.swapfile = false
-vim.opt.synmaxcol = 200 -- Only highlight the first 200 columns.
+vim.opt.synmaxcol = 1000 -- Only highlight the first 200 columns.
 vim.opt.ts = 4
 vim.opt.ttyfast = true -- Faster redrawing.
-vim.opt.undodir = os.getenv 'HOME' .. '/.vim/undo'
+vim.opt.undodir = os.getenv('HOME') .. '/.vim/undo'
 vim.opt.undofile = true
 vim.opt.updatecount = 100
 vim.opt.wrapscan = true -- Searches wrap around end-of-file.
 --vim.o.clipboard = vim.o.clipboard .. "unnamedplus"
 vim.api.nvim_set_keymap('n', 'u', '<nop>', { noremap = true })
 vim.api.nvim_set_keymap('n', '<Leader>u', ':undo<CR>', { noremap = true, silent = true }) -- Map leader u to undo
+-- this is to delete without yanking in normal mode
+vim.api.nvim_set_keymap('n', 'dd', '"_dd', { noremap = true })
 
-vim.cmd [[
+vim.cmd([[
   augroup jump_back
     autocmd!
     autocmd BufReadPost *
@@ -46,4 +48,4 @@ vim.cmd [[
           \ |   execute "normal! g`\""
           \ | endif
   augroup END
-]]
+]])
