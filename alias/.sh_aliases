@@ -38,7 +38,7 @@ refactor() {
     new_string=$2
 
     # Use ripgrep (rg) to search for files containing the old string
-    rg -l "$old_string" | parallel "gsed -i 's/$old_string/$new_string/g' {}"
+    sd $old_string $new_string $(rg -l $old_string)
 }
 
 
