@@ -1,1 +1,2 @@
---glob=!dist/**/*.js
+--glob=!**/dist/**/*.*js
+--glob=!**/dist/**/*.*js.map
