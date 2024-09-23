@@ -47,8 +47,7 @@ alias fy="fuck -y"
 alias gs="git status"
 alias ll="ls -lAh"
 #alias tree="tree -I 'node_modules|cache|test_*|.git'"
-alias git-branch-prune="gb -l | grep -Ev '(master|main|stable.*|stag|prod)' | xargs -I{} git branch -D {}"
-alias gbp="git-branch-prune"
+alias gbp="git fetch --prune"
 alias hgrep="history | grep"
 alias aws-docker-login='aws ecr get-login-password --region $(aws configure get region) |  docker login --username AWS --password-stdin $(aws sts get-caller-identity --query Account --output text).dkr.ecr.$(aws configure get region).amazonaws.com'
 
@@ -64,9 +63,17 @@ alias acsr="aws configure set region"
 alias yb="yarn build"
 alias gfp="git fetch --prune"
 alias ghprvw="gh pr view -w"
+alias m="make"
 alias prvw="gh pr view -w"
 alias setadcsshkey="gh ssh-key add ~/.ssh/id_rsa.pub -t peter_mbpr"
 alias peotry="poetry"
 # cat ~/.ssh/id_rsa.pub | pbcopy
 # easy copy ssh key
 alias copy_ssh_public_key="cat ~/.ssh/id_rsa.pub | pbcopy"
+alias npx="npm exec"
+alias gitroot="git rev-parse --show-toplevel"
+alias docker-compose="docker compose"
+
+git-make() {
+    make -C $(git rev-parse --show-toplevel) $@
+}
