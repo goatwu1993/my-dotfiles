@@ -1,102 +1,163 @@
+# source ~/.bash_profile
+#
+# start time (milliseconds)
+# Profile
+zshrc_start=$(date +%s)
+echo "Zshrc start at ${zshrc_start}"
+zmodload zsh/zprof
+
 # If you come from bash you might have to change your $PATH.
-# export PATH=$HOME/bin:/usr/local/bin:$PATH
-export PATH=/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin
+export PATH=$HOME/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin
 
 # Path to your oh-my-zsh installation.
-export ZSH="${HOME}/.oh-my-zsh"
+export ZSH="$HOME/.oh-my-zsh"
 
+# Set name of the theme to load --- if set to "random", it will
+# load a random theme each time oh-my-zsh is loaded, in which case,
+# to know which specific one was loaded, run: echo $RANDOM_THEME
+# See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
 ZSH_THEME="robbyrussell"
 
-HYPHEN_INSENSITIVE="true"
+# Set list of themes to pick from when loading at random
+# Setting this variable when ZSH_THEME=random will cause zsh to load
+# a theme from this variable instead of looking in $ZSH/themes/
+# If set to an empty array, this variable will have no effect.
+# ZSH_THEME_RANDOM_CANDIDATES=( "robbyrussell" "agnoster" )
 
+# Uncomment the following line to use case-sensitive completion.
+# CASE_SENSITIVE="true"
 
-# ==========================================================
-# Settings
-# ==========================================================
-#setopt correct
-#unsetopt correctall
-export LSCOLORS='Exfxcxdxbxegedabagacad'
-export LS_COLORS='di=1;34;40:ln=35;40:so=32;40:pi=33;40:ex=31;40:bd=34;46:cd=34;43:su=0;41:sg=0;46:tw=0;42:ow=0;43:'
-setopt append_history
-setopt extended_history
-setopt hist_expire_dups_first
-setopt hist_ignore_all_dups
-setopt hist_ignore_dups
-setopt hist_ignore_space
-setopt hist_reduce_blanks
-setopt hist_save_no_dups
-setopt hist_verify
-setopt INC_APPEND_HISTORY
-unsetopt HIST_BEEP
-setopt share_history
-HISTSIZE=10000
-SAVEHIST=10000
-HISTFILE=~/.zsh_history
-export HISTIGNORE="ls:cd:cd -:pwd:exit:date:* --help"
-setopt AUTO_CD
-setopt ALWAYS_TO_END
-setopt AUTO_LIST
-setopt AUTO_MENU
-setopt AUTO_PARAM_SLASH
-setopt COMPLETE_IN_WORD
-unsetopt MENU_COMPLETE
-REPORTTIME=2
-TIMEFMT="%U user %S system %P cpu %*Es total"
-zstyle ':completion:*' accept-exact '*(N)'
-zstyle ':completion:*' use-cache on
-zstyle ':completion:*' cache-path ~/.zsh/cache
-zstyle -e ':completion:*:default' list-colors 'reply=("${PREFIX:+=(#bi)($PREFIX:t)*==34=34}:${(s.:.)LS_COLORS}")';
-typeset -aU path;
+# Uncomment the following line to use hyphen-insensitive completion.
+# Case-sensitive completion must be off. _ and - will be interchangeable.
+# HYPHEN_INSENSITIVE="true"
 
-# ==========================================================
-# Plugin
-# ==========================================================
-plugins=(\
-	git \
-	wd \
-	zsh-autosuggestions \
-	zsh-completions \
-	alias-tips \
-	kubectl \
-)
+# Uncomment the following line to disable bi-weekly auto-update checks.
+# DISABLE_AUTO_UPDATE="true"
+
+# Uncomment the following line to automatically update without prompting.
+# DISABLE_UPDATE_PROMPT="true"
+
+# Uncomment the following line to change how often to auto-update (in days).
+# export UPDATE_ZSH_DAYS=13
+
+# Uncomment the following line if pasting URLs and other text is messed up.
+# DISABLE_MAGIC_FUNCTIONS="true"
+
+# Uncomment the following line to disable colors in ls.
+# DISABLE_LS_COLORS="true"
+
+# Uncomment the following line to disable auto-setting terminal title.
+# DISABLE_AUTO_TITLE="true"
+
+# Uncomment the following line to enable command auto-correction.
+# ENABLE_CORRECTION="true"
+
+# Uncomment the following line to display red dots whilst waiting for completion.
+# Caution: this setting can cause issues with multiline prompts (zsh 5.7.1 and newer seem to work)
+# See https://github.com/ohmyzsh/ohmyzsh/issues/5765
+# COMPLETION_WAITING_DOTS="true"
+
+# Uncomment the following line if you want to disable marking untracked files
+# under VCS as dirty. This makes repository status check for large repositories
+# much, much faster.
+# DISABLE_UNTRACKED_FILES_DIRTY="true"
+
+# Uncomment the following line if you want to change the command execution time
+# stamp shown in the history command output.
+# You can set one of the optional three formats:
+# "mm/dd/yyyy"|"dd.mm.yyyy"|"yyyy-mm-dd"
+# or set a custom format using the strftime function format specifications,
+# see 'man strftime' for details.
+# HIST_STAMPS="mm/dd/yyyy"
+
+# Would you like to use another custom folder than $ZSH/custom?
+# ZSH_CUSTOM=/path/to/new-custom-folder
+
+# Which plugins would you like to load?
+# Standard plugins can be found in $ZSH/plugins/
+# Custom plugins may be added to $ZSH_CUSTOM/plugins/
+# Example format: plugins=(rails git textmate ruby lighthouse)
+# Add wisely, as too many plugins slow down shell startup.
+plugins=(git wd kubectl aws helm alias-tips docker zsh-autosuggestions zsh-completions gh brew syft bom)
 
 source $ZSH/oh-my-zsh.sh
 
+# User configuration
 
-# ==========================================================
-# Personal alias
-# ==========================================================
-alias gs="git status"
+# export MANPATH="/usr/local/man:$MANPATH"
 
-# ==========================================================
-# Conda
-# ==========================================================
-# >>> conda initialize >>>
-# !! Contents within this block are managed by 'conda init' !!
-__conda_setup="$('${HOME}/miniconda3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
-if [ $? -eq 0 ]; then
-    eval "$__conda_setup"
-else
-    if [ -f "${HOME}/miniconda3/etc/profile.d/conda.sh" ]; then
-        . "${HOME}/miniconda3/etc/profile.d/conda.sh"
-    else
-        export PATH="${HOME}/miniconda3/bin:$PATH"
-    fi
-fi
-unset __conda_setup
-# <<< conda initialize <<<
+# You may need to manually set your language environment
+# export LANG=en_US.UTF-8
 
-# ==========================================================
-# Iterm2
-# ==========================================================
+# Preferred editor for local and remote sessions
+# if [[ -n $SSH_CONNECTION ]]; then
+#   export EDITOR='vim'
+# else
+#   export EDITOR='mvim'
+# fi
+
+# Compilation flags
+# export ARCHFLAGS="-arch x86_64"
+
+# Set personal aliases, overriding those provided by oh-my-zsh libs,
+# plugins, and themes. Aliases can be placed here, though oh-my-zsh
+# users are encouraged to define aliases within the ZSH_CUSTOM folder.
+# For a full list of active aliases, run `alias`.
+#
+# Example aliases
+# alias zshconfig="mate ~/.zshrc"
+# alias ohmyzsh="mate ~/.oh-my-zsh"
+source ~/.sh_aliases
+eval $(thefuck --alias)
+autoload bashcompinit && bashcompinit
+
+complete -C '/usr/local/bin/aws_completer' aws
+# zsh-completions
+zstyle ':completion:*:*:make:*' tag-order 'targets'
+fpath=(/usr/local/share/zsh-completions $fpath)
+autoload -Uz compinit && compinit
+compinit
+
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
 
-# ==========================================================
-# GitHub
-# ==========================================================
-export GH_PAGER=cat
+export PATH="/usr/local/opt/openjdk/bin:$PATH"
 
-# ==========================================================
-# Alias
-# ==========================================================
-source ~/.sh_aliases
+export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+
+# Load Angular CLI autocompletion.
+#source <(ng completion script)
+export PATH="/usr/local/opt/node@16/bin:$PATH"
+export DOCKER_SCAN_SUGGEST=false
+
+source ${HOME}/.docker/init-zsh.sh
+export PATH="$HOME/.cargo/bin:${PATH}"
+## rye
+#source "$HOME/.rye/env"
+
+export GOPATH="$HOME/go"
+export PATH=$PATH:$GOPATH/bin
+
+
+## Node Environment Manager
+export VOLTA_HOME="$HOME/.volta"
+export PATH="$VOLTA_HOME/bin:$PATH"
+
+
+[ -s "/usr/local/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/usr/local/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
+
+export BUILDKIT_PROGRESS=plain
+
+# dotnet
+export DOTNET_ROOT=/usr/local/share/dotnet
+export PATH=$PATH:/usr/local/share/dotnet
+export RIPGREP_CONFIG_PATH=$HOME/.ripgreprc
+
+# If reach here more then 5 seconds, print out the zprof
+zshrc_end=$(date +%s)
+echo "Zshrc end at ${zshrc_end}"
+zshrc_duration=$(( (zshrc_end - zshrc_start) / 1000000 ))
+echo "Zshrc loaded in $zshrc_duration ms"echo "Elapsed time: $ELAPSED_TIME"
+zprof
