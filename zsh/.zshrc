@@ -92,7 +92,7 @@ export DOCKER_SCAN_SUGGEST=false
 source ${HOME}/.docker/init-zsh.sh
 export PATH="$HOME/.cargo/bin:${PATH}"
 ## rye
-#source "$HOME/.rye/env"
+source "$HOME/.rye/env"
 
 export GOPATH="$HOME/go"
 export PATH=$PATH:$GOPATH/bin
