@@ -1,2 +1,4 @@
 --glob=!**/dist/**/*.*js
 --glob=!**/dist/**/*.*js.map
+--hidden
+--glob=!.git
