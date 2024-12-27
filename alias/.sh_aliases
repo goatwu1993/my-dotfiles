@@ -25,7 +25,12 @@ release-please-commit()
 
 jwt_payload()
 {
-    echo $@ | jq -R 'split(".") | .[1] | @base64d | fromjson'
+    cat | jq -R 'split(".") | .[1] | @base64d | fromjson'
+}
+
+get_git_ref()
+{
+    git rev-parse --abbrev-ref HEAD
 }
 
 refactor() {
@@ -77,3 +82,5 @@ alias docker-compose="docker compose"
 git-make() {
     make -C $(git rev-parse --show-toplevel) $@
 }
+
+alias altas="atlas"
