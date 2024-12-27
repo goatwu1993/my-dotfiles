@@ -212,7 +212,7 @@ local ruff_format_on_save = function()
 	})
 end
 
-lsp_config.ruff_lsp.setup({
+lsp_config.ruff.setup({
 	capabilities = capabilities,
 	on_attach = function(client, bufnr)
 		global_on_attach(client, bufnr)
@@ -274,7 +274,13 @@ lsp_config.gopls.setup({
 --end
 lsp_config.rust_analyzer.setup({
 	capabilities = capabilities,
-	on_attach = global_on_attach,
+	on_attach = function(client, bufnr)
+		global_on_attach(client, bufnr)
+		vim.api.nvim_command("augroup rust_fmt")
+		vim.api.nvim_command("autocmd!")
+		vim.api.nvim_command("autocmd BufWritePre <buffer> lua vim.lsp.buf.format({async = false})")
+		vim.api.nvim_command("augroup END")
+	end,
 })
 
 lsp_config.jsonls.setup({
@@ -360,6 +366,17 @@ lsp_config.yamlls.setup({
 			},
 		},
 	},
+})
+
+lsp_config.golangci_lint_ls.setup({
+	capabilities = capabilities,
+	cmd_env = { GOFUMPT_SPLIT_LONG_LINES = "on" },
+	on_attach = function(client, bufnr)
+		global_on_attach(client, bufnr)
+		vim.api.nvim_command("augroup go_fmt")
+		vim.api.nvim_command("autocmd BufWritePre <buffer> lua vim.lsp.buf.format()")
+		vim.api.nvim_command("augroup END")
+	end,
 })
 
 --require("treesitter-context").setup({
