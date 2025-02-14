@@ -1,6 +1,7 @@
 #!/bin/bash
 
 dbash() { docker exec -it $@ bash ;}
+dsh()  { docker exec -it $@ sh ;}
 dlog()  { docker logs --tail=all -f $@ ;}
 kbash() { kubectl exec -it $@ -- bash ;}
 lares_access_token()
@@ -81,6 +82,10 @@ alias docker-compose="docker compose"
 
 git-make() {
     make -C $(git rev-parse --show-toplevel) $@
+}
+
+curl_json() {
+    curl -H "Content-Type: application/json" $@
 }
 
 alias altas="atlas"
