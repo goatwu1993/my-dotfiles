@@ -9,6 +9,8 @@ lares_access_token()
     export LARES_ACCESS_TOKEN="$@"
 }
 
+function urldecode() { : "${*//+/ }"; echo -e "${_//%/\\x}"; }
+
 gh_run_view_detailed()
 {
     gh run view $@ --log-failed
@@ -29,7 +31,7 @@ jwt_payload()
     cat | jq -R 'split(".") | .[1] | @base64d | fromjson'
 }
 
-get_git_ref()
+git_sha()
 {
     git rev-parse --abbrev-ref HEAD
 }
@@ -79,6 +81,7 @@ alias copy_ssh_public_key="cat ~/.ssh/id_rsa.pub | pbcopy"
 alias npx="npm exec"
 alias gitroot="git rev-parse --show-toplevel"
 alias docker-compose="docker compose"
+alias docekr="docker"
 
 git-make() {
     make -C $(git rev-parse --show-toplevel) $@
