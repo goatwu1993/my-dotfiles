@@ -75,7 +75,7 @@ fpath=(/usr/local/share/zsh-completions $fpath)
 autoload -Uz compinit && compinit
 compinit
 
-test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
+#test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
 
 export PATH="/usr/local/opt/openjdk/bin:$PATH"
 
@@ -123,3 +123,31 @@ THRESHOLD=3
 if [ $zshrc_duration -gt $THRESHOLD ]; then
   zprof
 fi
+
+# >>> conda initialize >>>
+# !! Contents within this block are managed by 'conda init' !!
+#__conda_setup="$('/usr/local/Caskroom/miniconda/base/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
+#if [ $? -eq 0 ]; then
+#    eval "$__conda_setup"
+#else
+#    if [ -f "/usr/local/Caskroom/miniconda/base/etc/profile.d/conda.sh" ]; then
+#        . "/usr/local/Caskroom/miniconda/base/etc/profile.d/conda.sh"
+#    else
+#        export PATH="/usr/local/Caskroom/miniconda/base/bin:$PATH"
+#    fi
+#fi
+#unset __conda_setup
+# <<< conda initialize <<<
+
+
+# pnpm
+export PNPM_HOME="/Users/peter_wu/Library/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME:"*) ;;
+  *) export PATH="$PNPM_HOME:$PATH" ;;
+esac
+# pnpm end
+
+
+# custom envs
+source ~/.works
