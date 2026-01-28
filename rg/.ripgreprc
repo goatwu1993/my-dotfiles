@@ -2,3 +2,10 @@
 --glob=!**/dist/**/*.*js.map
 --hidden
 --glob=!.git
+--glob=!node_modules/*
+--glob=!**/package-lock.json
+--glob=!**/*.spdx.json
+--glob=!**/*.syft.json
+--glob=!**/*.grype.json
+--glob=!**/tests/**/fixtures/**
+--glob=!.chainlit/**/*

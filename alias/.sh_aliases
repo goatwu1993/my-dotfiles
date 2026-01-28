@@ -1,6 +1,7 @@
 #!/bin/bash
 
 dbash() { docker exec -it $@ bash ;}
+grep_cve() { grep -oE 'CVE-[0-9]*-[0-9]*' }
 dsh()  { docker exec -it $@ sh ;}
 dlog()  { docker logs --tail=all -f $@ ;}
 kbash() { kubectl exec -it $@ -- bash ;}
@@ -10,6 +11,11 @@ lares_access_token()
 }
 
 function urldecode() { : "${*//+/ }"; echo -e "${_//%/\\x}"; }
+
+function urlencode() {
+    local string="${1// /+}"
+    printf '%s' "$string" | jq -sRr @uri
+}
 
 gh_run_view_detailed()
 {
@@ -33,7 +39,7 @@ jwt_payload()
 
 git_sha()
 {
-    git rev-parse --abbrev-ref HEAD
+    git rev-parse HEAD
 }
 
 refactor() {
@@ -46,7 +52,70 @@ refactor() {
     new_string=$2
 
     # Use ripgrep (rg) to search for files containing the old string
-    sd $old_string $new_string $(rg -l $old_string)
+    sd "$old_string" "$new_string" $(rg -l "$old_string")
+}
+
+osv_purl() {
+    if [ $# -ne 1 ]; then
+        echo "Usage: osv_purl <purl>"
+        return 1
+    fi
+
+    purl=$1
+    curl -s "https://osv-vulnerabilities.storage.googleapis.com/v1/query?package=$purl" | jq '.'
+    curl -X POST https://api.osv.dev/v1/query -d "{\"package\": {\"purl\": \"$1\"}}" | jq
+}
+
+osv_cve() {
+    if [ $# -ne 1 ]; then
+        echo "Usage: osv_cve <cve_id>"
+        return 1
+    fi
+
+    cve_id=$1
+    curl -s "https://api.osv.dev/v1/vulns/$1" | jq '.'
+}
+
+radar_cve_search() {
+    if [ $# -ne 1 ]; then
+        echo "Usage: radar_cve_search <cve_id>"
+        return 1
+    fi
+
+    cve_id=$1
+    curl -X POST https://radar.rdsec.trendmicro.com/api/v1/artifacts/vulnerabilities -H "Content-Type: application/json" -d '{"filters": {"vulnId": "'"$cve_id"'"}, "pagination": {"limit": 100}}' | jq '.data'
+}
+
+radar_artifact_vulns() {
+    if [ $# -ne 1 ]; then
+        echo "Usage: radar_cve_search <cve_id>"
+        return 1
+    fi
+
+    cve_id=$1
+    curl https://radar.rdsec.trendmicro.com/api/v1/artifacts/${cve_id}/vulnerabilities | jq '.data'
+}
+
+
+
+grypeserver_purl() {
+    if [ $# -ne 1 ]; then
+        echo "Usage: grypeserver_purl <purl>"
+        return 1
+    fi
+
+    purl=$1
+    curl -X POST http://localhost:8003/api/v1/grype -d '{"purl": "'"$purl"'"}' | jq '.matches'
+}
+
+grypeserver_cpe() {
+    if [ $# -ne 1 ]; then
+        echo "Usage: grypeserver_cpe <cpe>"
+        return 1
+    fi
+
+    cpe=$1
+    curl -X POST http://localhost:8003/api/v1/grype -d '{"cpe": "'"$cpe"'"}' | jq '.matches'
 }
 
 
@@ -92,3 +161,19 @@ curl_json() {
 }
 
 alias altas="atlas"
+
+grbp() {
+    git fetch && git rebase && git push --force-with-lease
+}
+
+# takes one argument: the path to the git worktree
+gitworktreecd() {
+    worktree_name=$1
+    #git worktree list | grep "\[${WORKTREE_NAME}\]" | awk '{print $1}'
+    cd $(git worktree list | grep "\[${worktree_name}\]" | awk '{print $1}')
+}
+
+alias gprmads="gh pr merge --admin -d -s"
+alias tree='tree -I ".venv|node_modules|.git|__pycache__"'
+alias biomemigrate='npx @biomejs/biome migrate -- --write'
+alias ktp="kubectl top pod"
