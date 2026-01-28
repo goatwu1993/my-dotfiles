@@ -49,3 +49,14 @@ vim.cmd([[
           \ | endif
   augroup END
 ]])
+
+--vim.filetype.add({
+--  pattern = {
+--    -- Any YAML inside Helm templates/ is Helm template
+--    [".*/templates/.*%.yaml"] = "helm",
+--    [".*/templates/.*%.yml"] = "helm",
+--    ---- Values files
+--    --["values%.yaml"] = "helm",
+--    --["values%.yml"] = "helm",
+--  },
+--})

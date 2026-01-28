@@ -27,6 +27,12 @@ local function is_biome_repo()
     if biome_config_exists then
         return true, biome_config_path
     end
+    -- pwd.biome check
+    local pwd_biome_config_path = vim.fn.getcwd() .. '/biome.json'
+    local pwd_biome_config_exists = vim.fn.filereadable(pwd_biome_config_path) == 1
+    if pwd_biome_config_exists then
+        return true, pwd_biome_config_path
+    end
     return false, nil
 end
 
@@ -41,7 +47,7 @@ local global_on_attach = function(client, bufnr)
     vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gD', '<cmd>lua vim.lsp.buf.declaration()<CR>', opts)
     vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gd', '<cmd>lua vim.lsp.buf.definition()<CR>', opts)
     -- peek definition
-    vim.api.nvim_buf_set_keymap(bufnr, 'n', 'K', '<cmd>lua vim.lsp.buf.hover()<CR>', opts)
+    vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gp', '<cmd>lua vim.lsp.buf.hover()<CR>', opts)
     vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
     vim.api.nvim_buf_set_keymap(
         bufnr,
@@ -156,21 +162,24 @@ cmp.setup.cmdline(':', {
 local capabilities =
     require('cmp_nvim_lsp').default_capabilities(vim.lsp.protocol.make_client_capabilities())
 -- Replace <YOUR_LSP_SERVER> with each lsp server you've enabled.
-local lsp_config = require('lspconfig')
-lsp_config.pyright.setup({
+
+vim.lsp.enable('pyright')
+vim.lsp.config('pyright', {
     capabilities = capabilities,
     on_attach = global_on_attach,
 })
 
-lsp_config.terraformls.setup({
+vim.lsp.enable('terraformls')
+vim.lsp.config('terraformls', {
     cmnd = { 'terraform-ls', 'serve' },
     on_attach = global_on_attach,
+    filetypes = { 'terraform', 'tf' }, 
 })
 
 local runtime_path = vim.split(package.path, ';')
 table.insert(runtime_path, 'lua/?.lua')
 table.insert(runtime_path, 'lua/?/init.lua')
-lsp_config.lua_ls.setup({
+vim.lsp.config('lua_ls', {
     settings = {
         Lua = {
             runtime = {
@@ -194,29 +203,22 @@ lsp_config.lua_ls.setup({
             },
             formatting = {
                 --disable the formatter, use stylua instead
-                enable = false,
+                enable = true,
             },
         },
     },
-    on_attach = function(client, bufnr)
-        global_on_attach(client, bufnr)
-        vim.api.nvim_command('augroup lua_ls_fmt')
-        --vim.api.nvim_command("autocmd!")
-        -- custom override the default lsp formatter in flavor of stylua
-        --vim.api.nvim_command "autocmd BufWritePre <buffer> lua vim.lsp.buf.format()"
-        vim.api.nvim_command(
-            "autocmd BufWritePre <buffer> lua require('stylua-nvim').format_file()"
-        )
-        vim.api.nvim_command('augroup END')
-    end,
+    on_attach = global_on_attach;
 })
 
-lsp_config.ts_ls.setup({
+
+vim.lsp.enable('tsserver')
+vim.lsp.config('tsserver', {
     capabilities = capabilities,
     -- Needed for inlayHints. Merge this table with your settings or copy
     -- it from the source if you want to add your own init_options.
     init_options = require('nvim-lsp-ts-utils').init_options,
     --
+    filetypes = { 'typescript', 'typescriptreact', 'typescript.tsx', 'javascript', 'javascriptreact', 'javascript.jsx' },
     on_attach = function(client, bufnr)
         global_on_attach(client, bufnr)
 
@@ -228,8 +230,8 @@ lsp_config.ts_ls.setup({
         ts_utils.setup({
             auto_inlay_hints = false,
             filter_out_diagnostics_by_severity = { 'hint', 'info' },
-            update_imports_on_move = true,
-            require_confirmation_on_move = true,
+            --update_imports_on_move = true,
+            --require_confirmation_on_move = false
         })
 
         -- required to fix code action ranges and filter diagnostics
@@ -241,13 +243,14 @@ lsp_config.ts_ls.setup({
         -- vim.api.nvim_buf_set_keymap(bufnr, "n", "gr", ":TSLspRenameFile<CR>", opts)
         vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gS', ':TSLspImportAll<CR>', locaVarOpts)
     end,
+    cmd = { 'typescript-language-server', '--stdio' },
 })
 
 local ruff_format_on_save = function()
     vim.lsp.buf.format({ async = false })
     vim.lsp.buf.code_action({
         context = {
-            --diagnostics = vim.lsp.diagnostic.get(0),
+            diagnostics = vim.diagnostic.get(),
             only = {
                 'source.fixAll',
             },
@@ -256,7 +259,8 @@ local ruff_format_on_save = function()
     })
 end
 
-lsp_config.ruff.setup({
+vim.lsp.enable('ruff')
+vim.lsp.config('ruff', {
     capabilities = capabilities,
     on_attach = function(client, bufnr)
         global_on_attach(client, bufnr)
@@ -289,7 +293,10 @@ lsp_config.ruff.setup({
     },
 })
 
-lsp_config.gopls.setup({
+
+-- if the file is a go file, set up gopls
+vim.lsp.enable('gopls')
+vim.lsp.config('gopls', {
     capabilities = capabilities,
     on_attach = function(client, bufnr)
         global_on_attach(client, bufnr)
@@ -305,6 +312,7 @@ lsp_config.gopls.setup({
             staticcheck = true,
         },
     },
+    filetypes = { 'go', 'gomod' },
 })
 
 --local function setup_rust_fmt()
@@ -316,7 +324,9 @@ lsp_config.gopls.setup({
 --        vim.api.nvim_command('augroup END')
 --    end
 --end
-lsp_config.rust_analyzer.setup({
+
+vim.lsp.enable('rust_analyzer')
+vim.lsp.config('rust_analyzer', {
     capabilities = capabilities,
     on_attach = function(client, bufnr)
         global_on_attach(client, bufnr)
@@ -327,7 +337,8 @@ lsp_config.rust_analyzer.setup({
     end,
 })
 
-lsp_config.jsonls.setup({
+vim.lsp.enable('jsonls')
+vim.lsp.config('jsonls', {
     capabilities = capabilities,
     on_attach = global_on_attach,
 })
@@ -336,7 +347,7 @@ local biome_format_on_save = function()
     vim.lsp.buf.format({ async = false })
     vim.lsp.buf.code_action({
         context = {
-            diagnostics = vim.lsp.diagnostic.get(0),
+            diagnostics = vim.diagnostic.get(0),
             only = {
                 'source.fixAll',
             },
@@ -346,27 +357,29 @@ local biome_format_on_save = function()
 end
 
 -- biome
+vim.lsp.enable('biome')
 if is_biome_repo() then
-    lsp_config.biome.setup({
+    vim.lsp.config('biome', {
         capabilities = capabilities,
         on_attach = function(client, bufnr)
             global_on_attach(client, bufnr)
-            vim.api.nvim_buf_set_keymap(
-                bufnr,
-                'n',
-                '<Leader>rn',
-                '<Cmd>lua vim.lsp.buf.rename()<CR>',
-                { noremap = true, silent = true }
-            )
+            --vim.api.nvim_buf_set_keymap(
+            --    bufnr,
+            --    'n',
+            --    '<Leader>rn',
+            --    '<Cmd>lua vim.lsp.buf.rename()<CR>',
+            --    { noremap = true, silent = true }
+            --)
             -- auto format
-            vim.api.nvim_command('augroup biome_fmt')
-            vim.api.nvim_command('autocmd!')
-            vim.api.nvim_command('autocmd BufWritePre <buffer> lua vim.lsp.buf.format()')
-            vim.api.nvim_command('augroup END')
+            -- use biome fix all
+            vim.api.nvim_create_autocmd('BufWritePre', {
+                group = vim.api.nvim_create_augroup('biome_format_on_save', { clear = true }),
+                callback = biome_format_on_save,
+            })
         end,
     })
 else
-    lsp_config.eslint.setup({
+    vim.lsp.config('eslint', {
         capabilities = capabilities,
         on_attach = function(client, bufnr)
             global_on_attach(client, bufnr)
@@ -381,7 +394,8 @@ else
     })
 end
 
-lsp_config.yamlls.setup({
+vim.lsp.enable('yamlls')
+vim.lsp.config('yamlls', {
     capabilities = capabilities,
     on_attach = function(client, bufnr)
         global_on_attach(client, bufnr)
@@ -412,7 +426,7 @@ lsp_config.yamlls.setup({
     },
 })
 
-lsp_config.golangci_lint_ls.setup({
+vim.lsp.config('golangci_lint_ls', {
     capabilities = capabilities,
     cmd_env = { GOFUMPT_SPLIT_LONG_LINES = 'on' },
     on_attach = function(client, bufnr)
