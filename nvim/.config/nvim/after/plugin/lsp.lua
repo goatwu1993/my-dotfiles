@@ -38,9 +38,9 @@ end
 
 -- Use an on_attach function to only map the following keys
 -- after the language server attaches to the current buffer
-local global_on_attach = function(client, bufnr)
+local global_on_attach = function(_client, bufnr)
     -- Enable completion triggered by <c-x><c-o>
-    vim.api.nvim_buf_set_option(bufnr, 'omnifunc', 'v:lua.vim.lsp.omnifunc')
+    vim.bo[bufnr].omnifunc = 'v:lua.vim.lsp.omnifunc'
 
     -- Mappings.
     -- See `:help vim.lsp.*` for documentation on any of the below functions
@@ -93,13 +93,18 @@ local global_on_attach = function(client, bufnr)
         opts
     )
     vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
-    vim.api.nvim_buf_set_keymap(
-        bufnr,
-        'n',
-        '<space>f',
-        '<cmd>lua vim.lsp.buf.formatting()<CR>',
-        opts
-    )
+
+    -- Auto-format on save (only if client supports formatting)
+    if _client.server_capabilities.documentFormattingProvider then
+        local augroup = vim.api.nvim_create_augroup('LspFormatOnSave_' .. bufnr, { clear = true })
+        vim.api.nvim_create_autocmd('BufWritePre', {
+            group = augroup,
+            buffer = bufnr,
+            callback = function()
+                vim.lsp.buf.format({ async = false })
+            end,
+        })
+    end
 end
 
 cmp.setup({
@@ -173,9 +178,11 @@ vim.lsp.enable('terraformls')
 vim.lsp.config('terraformls', {
     cmnd = { 'terraform-ls', 'serve' },
     on_attach = global_on_attach,
-    filetypes = { 'terraform', 'tf' }, 
+    filetypes = { 'terraform', 'tf' },
 })
 
+
+vim.lsp.enable('lua_ls')
 local runtime_path = vim.split(package.path, ';')
 table.insert(runtime_path, 'lua/?.lua')
 table.insert(runtime_path, 'lua/?/init.lua')
@@ -207,7 +214,7 @@ vim.lsp.config('lua_ls', {
             },
         },
     },
-    on_attach = global_on_attach;
+    on_attach = global_on_attach,
 })
 
 
