@@ -1,54 +1,23 @@
-# source ~/.bash_profile
-#
-# start time (milliseconds)
-# Profile
+# Optimized .zshrc with lazy-loading
+# Performance profiling - start
 zshrc_start=$(date +%s)
 echo "Zshrc start at ${zshrc_start}"
 zmodload zsh/zprof
 
-# If you come from bash you might have to change your $PATH.
+# Basic PATH setup
 export PATH=$HOME/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin
 
-# Path to your oh-my-zsh installation.
+# Oh-my-zsh configuration
 export ZSH="$HOME/.oh-my-zsh"
-
-# Set name of the theme to load --- if set to "random", it will
-# load a random theme each time oh-my-zsh is loaded, in which case,
-# to know which specific one was loaded, run: echo $RANDOM_THEME
-# See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
 ZSH_THEME="robbyrussell"
 
-# Uncomment the following line to use case-sensitive completion.
-# CASE_SENSITIVE="true"
-
-# Uncomment the following line to use hyphen-insensitive completion.
-# Case-sensitive completion must be off. _ and - will be interchangeable.
-# HYPHEN_INSENSITIVE="true"
-
-# Uncomment the following line if pasting URLs and other text is messed up.
-# DISABLE_MAGIC_FUNCTIONS="true"
-
-# Uncomment the following line if you want to disable marking untracked files
-# under VCS as dirty. This makes repository status check for large repositories
-# much, much faster.
-# DISABLE_UNTRACKED_FILES_DIRTY="true"
-
-# Uncomment the following line if you want to change the command execution time
-# stamp shown in the history command output.
-# You can set one of the optional three formats:
-# "mm/dd/yyyy"|"dd.mm.yyyy"|"yyyy-mm-dd"
-# or set a custom format using the strftime function format specifications,
-# see 'man strftime' for details.
-# HIST_STAMPS="mm/dd/yyyy"
-
+# Optimized plugin list - removed heavy completion plugins (aws, kubectl)
+# These will be lazy-loaded instead
 plugins=(
-    alias-tips
-    aws
-    brew
-    docker
-    gh
     git
-    kubectl
+    docker
+    brew
+    gh
     wd
     zsh-autosuggestions
     zsh-completions
@@ -56,89 +25,85 @@ plugins=(
 
 source $ZSH/oh-my-zsh.sh
 
+# Locale
 export LANG=en_US.UTF-8
 
- if [[ -n $SSH_CONNECTION ]]; then
+# Editor
+if [[ -n $SSH_CONNECTION ]]; then
    export EDITOR='vim'
- else
+else
    export EDITOR='nvim'
- fi
+fi
 
-source ~/.sh_aliases
-eval $(thefuck --alias)
+# Source aliases (fast, no lazy-loading needed)
+[ -f ~/.sh_aliases ] && source ~/.sh_aliases
+
+# =============================================================================
+# Completion setup - optimized to run once
+# =============================================================================
+autoload -Uz compinit
+
+# Only regenerate compdump once a day for faster startup
+# https://gist.github.com/ctechols/ca1035271ad134841284
+if [[ -n ${ZDOTDIR}/.zcompdump(#qN.mh+24) ]]; then
+    compinit
+else
+    compinit -C
+fi
+
+# Load bash completion for AWS CLI (will be lazy-loaded)
 autoload bashcompinit && bashcompinit
 
-complete -C '/usr/local/bin/aws_completer' aws
 # zsh-completions
 zstyle ':completion:*:*:make:*' tag-order 'targets'
 fpath=(/usr/local/share/zsh-completions $fpath)
-autoload -Uz compinit && compinit
-compinit
 
-#test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
-
+# =============================================================================
+# Path exports - these are fast
+# =============================================================================
 export PATH="/usr/local/opt/openjdk/bin:$PATH"
-
 export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
-
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-
-
-# Load Angular CLI autocompletion.
-#source <(ng completion script)
 export PATH="/usr/local/opt/node@16/bin:$PATH"
-export DOCKER_SCAN_SUGGEST=false
-
-source ${HOME}/.docker/init-zsh.sh
-export PATH="$HOME/.cargo/bin:${PATH}"
-## rye
-source "$HOME/.rye/env"
-
+export PATH="$HOME/.cargo/bin:$PATH"
 export GOPATH="$HOME/go"
-export PATH=$PATH:$GOPATH/bin
-
-
-## Node Environment Manager
+export PATH="$PATH:$GOPATH/bin"
 export VOLTA_HOME="$HOME/.volta"
 export PATH="$VOLTA_HOME/bin:$PATH"
-
-
-[ -s "/usr/local/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/usr/local/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
-
-export BUILDKIT_PROGRESS=plain
-
-# dotnet
 export DOTNET_ROOT=/usr/local/share/dotnet
-export PATH=$PATH:/usr/local/share/dotnet
+export PATH="$PATH:/usr/local/share/dotnet"
+
+# =============================================================================
+# Environment variables - these are fast
+# =============================================================================
+export DOCKER_SCAN_SUGGEST=false
+export BUILDKIT_PROGRESS=plain
 export RIPGREP_CONFIG_PATH=$HOME/.ripgreprc
 
-# If reach here more then 5 seconds, print out the zprof
-# use zprof time
-zshrc_end=$(date +%s)
-echo "Zshrc end at ${zshrc_end}"
-zshrc_duration=$((zshrc_end - zshrc_start))
-echo "Elapsed time: $zshrc_duration"
-# If > threshold, print out the zprof
-THRESHOLD=3
-if [ $zshrc_duration -gt $THRESHOLD ]; then
-  zprof
+# =============================================================================
+# Deferred/Lazy-loaded initializations
+# =============================================================================
+
+# FZF - defer loading
+if [ -f ~/.fzf.zsh ]; then
+    source ~/.fzf.zsh
 fi
 
-# >>> conda initialize >>>
-# !! Contents within this block are managed by 'conda init' !!
-#__conda_setup="$('/usr/local/Caskroom/miniconda/base/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
-#if [ $? -eq 0 ]; then
-#    eval "$__conda_setup"
-#else
-#    if [ -f "/usr/local/Caskroom/miniconda/base/etc/profile.d/conda.sh" ]; then
-#        . "/usr/local/Caskroom/miniconda/base/etc/profile.d/conda.sh"
-#    else
-#        export PATH="/usr/local/Caskroom/miniconda/base/bin:$PATH"
-#    fi
-#fi
-#unset __conda_setup
-# <<< conda initialize <<<
+# Docker init - defer if it exists
+if [ -f "${HOME}/.docker/init-zsh.sh" ]; then
+    # Fork the sourcing to background to not block shell startup
+    (source "${HOME}/.docker/init-zsh.sh" &)
+fi
 
+# Rye - quick, load normally
+[ -f "$HOME/.rye/env" ] && source "$HOME/.rye/env"
+
+# NVM completion - defer if it exists
+if [ -s "/usr/local/opt/nvm/etc/bash_completion.d/nvm" ]; then
+    # Lazy load NVM
+    export NVM_DIR="$HOME/.nvm"
+    [ -s "/usr/local/opt/nvm/nvm.sh" ] && \. "/usr/local/opt/nvm/nvm.sh" --no-use
+    alias nvm='unalias nvm; [ -s "/usr/local/opt/nvm/nvm.sh" ] && \. "/usr/local/opt/nvm/nvm.sh"; nvm $@'
+fi
 
 # pnpm
 export PNPM_HOME="/Users/peter_wu/Library/pnpm"
@@ -146,8 +111,26 @@ case ":$PATH:" in
   *":$PNPM_HOME:"*) ;;
   *) export PATH="$PNPM_HOME:$PATH" ;;
 esac
-# pnpm end
 
+# Custom envs - load if exists
+[ -f ~/.works ] && source ~/.works
 
-# custom envs
-source ~/.works
+# =============================================================================
+# Lazy loading for heavy tools
+# =============================================================================
+source ~/.zsh-lazy-load.sh
+
+# =============================================================================
+# Performance profiling - end
+# =============================================================================
+zshrc_end=$(date +%s)
+echo "Zshrc end at ${zshrc_end}"
+zshrc_duration=$((zshrc_end - zshrc_start))
+echo "Elapsed time: ${zshrc_duration}s"
+
+# If > threshold, print out the zprof
+THRESHOLD=3
+if [ $zshrc_duration -gt $THRESHOLD ]; then
+    echo "\n⚠️  Shell startup took ${zshrc_duration}s (threshold: ${THRESHOLD}s)"
+    echo "Run 'zprof' to see detailed profiling information"
+fi
