@@ -42,17 +42,36 @@ git_sha()
     git rev-parse HEAD
 }
 
-refactor() {
-    if [ $# -ne 2 ]; then
-        echo "Usage: replace_strings <old_string> <new_string>"
-        return 1
-    fi
+refactor () {
+	if [ "$#" -lt 2 ] || [ "$#" -gt 3 ]; then
+		echo "Usage:"
+		echo "  refactor <old> <new>        # literal"
+		echo "  refactor -E <pattern> <new> # regex"
+		return 1
+	fi
 
-    old_string=$1
-    new_string=$2
+	local use_regex=0
 
-    # Use ripgrep (rg) to search for files containing the old string
-    sd "$old_string" "$new_string" $(rg -l "$old_string")
+	if [ "$1" = "-E" ]; then
+		use_regex=1
+		shift
+	fi
+
+	local old="$1"
+	local new="$2"
+
+	if [ "$use_regex" -eq 1 ]; then
+		# regex mode
+		rg -l --null "$old" | xargs -0 -r sd "$old" "$new"
+	else
+		# literal mode
+		rg -l --fixed-strings --null "$old" | \
+			xargs -0 -r sd -F "$old" "$new"
+	fi
+}
+
+fix_trailing_spaces() {
+    refactor -E '[ \t]+$' ''
 }
 
 osv_purl() {
@@ -173,7 +192,34 @@ gitworktreecd() {
     cd $(git worktree list | grep "\[${worktree_name}\]" | awk '{print $1}')
 }
 
+unalias gwt 2>/dev/null
+gwt() {
+    local branch="${1:?branch name required}"
+    local base="${2:-origin/main}"
+    local safe
+    safe=$(python3 -c "
+import re, sys
+s = sys.argv[1].lower()
+s = re.sub(r'[^a-z0-9._-]+', '-', s)
+s = s.strip('-')
+print(s)
+" "$branch")
+    local dir="$(git rev-parse --show-toplevel)/../${safe}"
+    git worktree add "${dir}" -b "${safe}" "${base}" >&2
+    echo "${dir}"
+  }
+
+killport() {
+    lsof -i :$1 -t | xargs kill -9
+}
+
 alias gprmads="gh pr merge --admin -d -s"
 alias tree='tree -I ".venv|node_modules|.git|__pycache__"'
 alias biomemigrate='npx @biomejs/biome migrate -- --write'
 alias ktp="kubectl top pod"
+alias mdkir="mkdir -p"
+alias mkdir="mkdir -p"
+alias npmci="npm ci --ignore-scripts"
+alias hgrepcmd="history | sed 's/^[[:space:]]*[0-9][0-9]*[[:space:]]*//' | grep -v hgrepcmd | grep"
+# alias docker="podman"  # switched to colima
+alias lint='make lint'

@@ -7,5 +7,6 @@
 --glob=!**/*.spdx.json
 --glob=!**/*.syft.json
 --glob=!**/*.grype.json
---glob=!**/tests/**/fixtures/**
 --glob=!.chainlit/**/*
+--glob=!**/d3web/static/**
+--glob=!**/tests/**/fixtures/**

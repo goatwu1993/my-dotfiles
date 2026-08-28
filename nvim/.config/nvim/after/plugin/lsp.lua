@@ -168,8 +168,8 @@ local capabilities =
     require('cmp_nvim_lsp').default_capabilities(vim.lsp.protocol.make_client_capabilities())
 -- Replace <YOUR_LSP_SERVER> with each lsp server you've enabled.
 
-vim.lsp.enable('pyright')
-vim.lsp.config('pyright', {
+vim.lsp.enable('pyrefly')
+vim.lsp.config('pyrefly', {
     capabilities = capabilities,
     on_attach = global_on_attach,
 })
@@ -266,7 +266,19 @@ local ruff_format_on_save = function()
     })
 end
 
-vim.lsp.enable('ruff')
+local function should_enable_ruff()
+    local cwd = vim.fn.getcwd()
+    -- Disable for this specific repo
+    --if cwd:match("securitydashboard/djangoapp") then
+    --    return false
+    --end
+    return true
+end
+
+if should_enable_ruff() then
+    vim.lsp.enable('ruff')
+end
+
 vim.lsp.config('ruff', {
     capabilities = capabilities,
     on_attach = function(client, bufnr)
@@ -348,6 +360,13 @@ vim.lsp.enable('jsonls')
 vim.lsp.config('jsonls', {
     capabilities = capabilities,
     on_attach = global_on_attach,
+})
+
+vim.lsp.enable('taplo')
+vim.lsp.config('taplo', {
+    capabilities = capabilities,
+    on_attach = global_on_attach,
+    filetypes = { 'toml' },
 })
 
 local biome_format_on_save = function()
