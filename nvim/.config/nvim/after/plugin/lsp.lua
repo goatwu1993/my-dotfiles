@@ -2,8 +2,9 @@ local cmp = require('cmp')
 
 local opts = { noremap = true, silent = true }
 vim.api.nvim_set_keymap('n', '<space>e', '<cmd>lua vim.diagnostic.open_float()<CR>', opts)
-vim.keymap.set('n', '[d', function() vim.diagnostic.jump({ count = -1 }) end, opts)
-vim.keymap.set('n', ']d', function() vim.diagnostic.jump({ count = 1 }) end, opts)
+-- float = true to show the diagnostic in a floating window after jumping to the next/previous diagnostic
+vim.keymap.set('n', '[d', function() vim.diagnostic.jump({ count = -1, float = true }) end, opts)
+vim.keymap.set('n', ']d', function() vim.diagnostic.jump({ count = 1, float = true }) end, opts)
 vim.api.nvim_set_keymap('n', '<space>q', '<cmd>lua vim.diagnostic.setloclist()<CR>', opts)
 vim.api.nvim_set_keymap(
     'n',
@@ -253,13 +254,29 @@ vim.lsp.config('tsserver', {
     cmd = { 'typescript-language-server', '--stdio' },
 })
 
+--local ruff_format_on_save = function()
+--    vim.lsp.buf.format({ async = false })
+--    vim.lsp.buf.code_action({
+--        context = {
+--            diagnostics = vim.diagnostic.get(),
+--            only = {
+--                'source.fixAll',
+--            },
+--        },
+--        apply = true,
+--    })
+--end
+
 local ruff_format_on_save = function()
-    vim.lsp.buf.format({ async = false })
+    vim.lsp.buf.format({
+        async = false,
+        name = 'ruff',
+    })
+
     vim.lsp.buf.code_action({
         context = {
-            diagnostics = vim.diagnostic.get(),
             only = {
-                'source.fixAll',
+                'source.fixAll.ruff',
             },
         },
         apply = true,
