@@ -76,4 +76,6 @@ vim.pack.add({
 
     -- Easy motion
     'https://github.com/easymotion/vim-easymotion',
+    -- For telescope
+    'https://github.com/nvim-lua/plenary.nvim'
 })
