@@ -95,59 +95,13 @@ osv_cve() {
     curl -s "https://api.osv.dev/v1/vulns/$1" | jq '.'
 }
 
-radar_cve_search() {
-    if [ $# -ne 1 ]; then
-        echo "Usage: radar_cve_search <cve_id>"
-        return 1
-    fi
 
-    cve_id=$1
-    curl -X POST https://radar.rdsec.trendmicro.com/api/v1/artifacts/vulnerabilities -H "Content-Type: application/json" -d '{"filters": {"vulnId": "'"$cve_id"'"}, "pagination": {"limit": 100}}' | jq '.data'
-}
-
-radar_artifact_vulns() {
-    if [ $# -ne 1 ]; then
-        echo "Usage: radar_cve_search <cve_id>"
-        return 1
-    fi
-
-    cve_id=$1
-    curl https://radar.rdsec.trendmicro.com/api/v1/artifacts/${cve_id}/vulnerabilities | jq '.data'
-}
-
-
-
-grypeserver_purl() {
-    if [ $# -ne 1 ]; then
-        echo "Usage: grypeserver_purl <purl>"
-        return 1
-    fi
-
-    purl=$1
-    curl -X POST http://localhost:8003/api/v1/grype -d '{"purl": "'"$purl"'"}' | jq '.matches'
-}
-
-grypeserver_cpe() {
-    if [ $# -ne 1 ]; then
-        echo "Usage: grypeserver_cpe <cpe>"
-        return 1
-    fi
-
-    cpe=$1
-    curl -X POST http://localhost:8003/api/v1/grype -d '{"cpe": "'"$cpe"'"}' | jq '.matches'
-}
-
-
-#alias vim="nvim"
 alias fy="fuck -y"
 alias gs="git status"
 alias ll="ls -lAh"
 #alias tree="tree -I 'node_modules|cache|test_*|.git'"
 alias gbp="git fetch --prune"
 alias hgrep="history | grep"
-alias aws-docker-login='aws ecr get-login-password --region $(aws configure get region) |  docker login --username AWS --password-stdin $(aws sts get-caller-identity --query Account --output text).dkr.ecr.$(aws configure get region).amazonaws.com'
-
-alias copysshpub='cat ~/.ssh/id_rsa.pub | pbcopy'
 alias v="nvim"
 alias vm="nvim"
 alias vi="nvim"
@@ -161,11 +115,6 @@ alias gfp="git fetch --prune"
 alias ghprvw="gh pr view -w"
 alias m="make"
 alias prvw="gh pr view -w"
-alias setadcsshkey="gh ssh-key add ~/.ssh/id_rsa.pub -t peter_mbpr"
-alias peotry="poetry"
-# cat ~/.ssh/id_rsa.pub | pbcopy
-# easy copy ssh key
-alias copy_ssh_public_key="cat ~/.ssh/id_rsa.pub | pbcopy"
 alias npx="npm exec"
 alias gitroot="git rev-parse --show-toplevel"
 alias docker-compose="docker compose"
