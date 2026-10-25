@@ -1,25 +1,15 @@
 #!/bin/bash
 
 dbash() { docker exec -it $@ bash ;}
-grep_cve() { grep -oE 'CVE-[0-9]*-[0-9]*' }
 dsh()  { docker exec -it $@ sh ;}
 dlog()  { docker logs --tail=all -f $@ ;}
 kbash() { kubectl exec -it $@ -- bash ;}
-lares_access_token()
-{
-    export LARES_ACCESS_TOKEN="$@"
-}
 
 function urldecode() { : "${*//+/ }"; echo -e "${_//%/\\x}"; }
 
 function urlencode() {
     local string="${1// /+}"
     printf '%s' "$string" | jq -sRr @uri
-}
-
-gh_run_view_detailed()
-{
-    gh run view $@ --log-failed
 }
 
 touch_init_py()
@@ -74,32 +64,9 @@ fix_trailing_spaces() {
     refactor -E '[ \t]+$' ''
 }
 
-osv_purl() {
-    if [ $# -ne 1 ]; then
-        echo "Usage: osv_purl <purl>"
-        return 1
-    fi
-
-    purl=$1
-    curl -s "https://osv-vulnerabilities.storage.googleapis.com/v1/query?package=$purl" | jq '.'
-    curl -X POST https://api.osv.dev/v1/query -d "{\"package\": {\"purl\": \"$1\"}}" | jq
-}
-
-osv_cve() {
-    if [ $# -ne 1 ]; then
-        echo "Usage: osv_cve <cve_id>"
-        return 1
-    fi
-
-    cve_id=$1
-    curl -s "https://api.osv.dev/v1/vulns/$1" | jq '.'
-}
-
-
 alias fy="fuck -y"
 alias gs="git status"
 alias ll="ls -lAh"
-#alias tree="tree -I 'node_modules|cache|test_*|.git'"
 alias gbp="git fetch --prune"
 alias hgrep="history | grep"
 alias v="nvim"
